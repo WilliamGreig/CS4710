@@ -136,19 +136,22 @@ def breadthFirstSearch(problem):
     # while queue has fringe nodes
     while not queue.isEmpty():
         # pop off queue
-        state = queue.pop()
+        state, action, cost = queue.pop()
         # if goal, target reached
-        if problem.isGoalState(state[0]):
+        if problem.isGoalState(state):
             # return actions path, as opposed to the state atm
-            return state[1]
+            return action
         # if state not visited yet, visit and explore child nodes
-        if state[0] not in visited:
-            visited[state[0]] = True
-            for successors in problem.getSuccessors(state[0]):
+        if state not in visited:
+            visited[state] = True
+            for successors in problem.getSuccessors(state):
+                successor_state = successors[0]
+                successor_action = successors[1]
+                successor_cost = successors[2]
                 # push new state onto queue: new_state, action path, and cumulative cost
-                action_list = state[1].copy()
-                action_list.append(successors[1])
-                queue.push( (successors[0], action_list, state[2] + successors[2]) )
+                action_list = action.copy()
+                action_list.append(successor_action)
+                queue.push( (successor_state, action_list, cost + successor_cost) )
     return False
 
 
@@ -162,19 +165,22 @@ def uniformCostSearch(problem):
     # while queue has fringe nodes
     while not queue.isEmpty():
         # pop off queue
-        state = queue.pop()
+        state, action, cost = queue.pop()
         # if goal, target reached
-        if problem.isGoalState(state[0]):
+        if problem.isGoalState(state):
             # return actions path, as opposed to the state atm
-            return state[1]
+            return action
         # if state not visited yet, visit and explore child nodes
-        if state[0] not in visited:
-            visited[state[0]] = True
-            for successors in problem.getSuccessors(state[0]):
+        if state not in visited:
+            visited[state] = True
+            for successors in problem.getSuccessors(state):
+                successor_state = successors[0]
+                successor_action = successors[1]
+                successor_cost = successors[2]
                 # push new state onto queue: new_state, action path, and cumulative cost
-                action_list = state[1].copy()
-                action_list.append(successors[1])
-                queue.push( (successors[0], action_list, state[2] + successors[2]), state[2] + successors[2])
+                action_list = action.copy()
+                action_list.append(successor_action)
+                queue.push( (successor_state, action_list, cost + successor_cost), cost + successor_cost)
     return False
 
 def nullHeuristic(state, problem=None):
@@ -193,19 +199,22 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     # while queue has fringe nodes
     while not queue.isEmpty():
         # pop off queue
-        state = queue.pop()
+        state, action, cost = queue.pop()
         # if goal, target reached
-        if problem.isGoalState(state[0]):
+        if problem.isGoalState(state):
             # return actions path, as opposed to the state atm
-            return state[1]
+            return action
         # if state not visited yet, visit and explore child nodes
-        if state[0] not in visited:
-            visited[state[0]] = True
-            for successors in problem.getSuccessors(state[0]):
+        if state not in visited:
+            visited[state] = True
+            for successors in problem.getSuccessors(state):
+                successor_state = successors[0]
+                successor_action = successors[1]
+                successor_cost = successors[2]
                 # push new state onto queue: new_state, action path, and cumulative cost
-                action_list = state[1].copy()
-                action_list.append(successors[1])
-                queue.push( (successors[0], action_list, state[2] + successors[2]), state[2] + successors[2] + heuristic(successors[0], problem))
+                action_list = action.copy()
+                action_list.append(successor_action)
+                queue.push( (successor_state, action_list, cost + successor_cost), cost + successor_cost + heuristic(successor_state, problem))
     return False
 
 
