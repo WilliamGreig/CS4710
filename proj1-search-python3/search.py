@@ -72,6 +72,25 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+def getMoveList(game_states):
+    from game import Directions
+    s = Directions.SOUTH
+    w = Directions.WEST
+    e = Directions.EAST
+    n = Directions.NORTH
+    move_list = []
+    for state in game_states:
+        if state[1] == s:
+            move_list.append(s)
+        if state[1] == w:
+            move_list.append(w)
+        if state[1] == e:
+            move_list.append(e)
+        if state[1] == n:
+            move_list.append(n)
+    return move_list
+
+
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
@@ -86,18 +105,77 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    visited = {}
+    stack = util.Stack()
+    path = util.Stack()
+    result = dfs_rec(problem, problem.getStartState(), stack, path, visited)
+    return result
+
+def dfs_rec(problem, state, stack, path, visited):
+    stack.push(state)
+    if problem.isGoalState(state):
+        return path.list
+    visited[state] = True
+    for successors in problem.getSuccessors(state):
+        if successors[0] not in visited:
+            path.push(successors[1])
+            result = dfs_rec(problem, successors[0], stack, path, visited)
+            if result != False:
+                return path.list
+                # return stack
+    path.pop()
+    stack.pop()
+    return False
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    visited = {}
+    queue = util.Queue()
+    queue.push( (problem.getStartState(), [], 0) )
+    # while queue has fringe nodes
+    while not queue.isEmpty():
+        # pop off queue
+        state = queue.pop()
+        # if goal, target reached
+        if problem.isGoalState(state[0]):
+            # return actions path, as opposed to the state atm
+            return state[1]
+        # if state not visited yet, visit and explore child nodes
+        if state[0] not in visited:
+            visited[state[0]] = True
+            for successors in problem.getSuccessors(state[0]):
+                # push new state onto queue: new_state, action path, and cumulative cost
+                action_list = state[1].copy()
+                action_list.append(successors[1])
+                queue.push( (successors[0], action_list, state[2] + successors[2]) )
+    return False
 
+
+# haha -- copy and paste BFS but change to PriorityQueue to queue least cost first
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    visited = {}
+    queue = util.PriorityQueue()
+    queue.push( (problem.getStartState(), [], 0), 0)
+    # while queue has fringe nodes
+    while not queue.isEmpty():
+        # pop off queue
+        state = queue.pop()
+        # if goal, target reached
+        if problem.isGoalState(state[0]):
+            # return actions path, as opposed to the state atm
+            return state[1]
+        # if state not visited yet, visit and explore child nodes
+        if state[0] not in visited:
+            visited[state[0]] = True
+            for successors in problem.getSuccessors(state[0]):
+                # push new state onto queue: new_state, action path, and cumulative cost
+                action_list = state[1].copy()
+                action_list.append(successors[1])
+                queue.push( (successors[0], action_list, state[2] + successors[2]), state[2] + successors[2])
+    return False
 
 def nullHeuristic(state, problem=None):
     """
@@ -109,7 +187,26 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    visited = {}
+    queue = util.PriorityQueue()
+    queue.push( (problem.getStartState(), [], 0), 0)
+    # while queue has fringe nodes
+    while not queue.isEmpty():
+        # pop off queue
+        state = queue.pop()
+        # if goal, target reached
+        if problem.isGoalState(state[0]):
+            # return actions path, as opposed to the state atm
+            return state[1]
+        # if state not visited yet, visit and explore child nodes
+        if state[0] not in visited:
+            visited[state[0]] = True
+            for successors in problem.getSuccessors(state[0]):
+                # push new state onto queue: new_state, action path, and cumulative cost
+                action_list = state[1].copy()
+                action_list.append(successors[1])
+                queue.push( (successors[0], action_list, state[2] + successors[2]), state[2] + successors[2] + heuristic(successors[0], problem))
+    return False
 
 
 # Abbreviations
