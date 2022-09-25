@@ -22,7 +22,7 @@ import traceback
 import pdb
 from collections import defaultdict
 import util
-
+import html
 
 class Grades:
     "A data structure for project grades, along with formatting code to display them"
@@ -299,7 +299,7 @@ to follow your instructor's guidelines to receive credit on your project.
             print('*** ' + message)
             if self.mute:
                 util.mutePrint()
-            message = cgi.escape(message)
+            message = html.escape(message)
         self.messages[self.currentQuestion].append(message)
 
     def addMessageToEmail(self, message):
